@@ -18,6 +18,7 @@ interface ScannedData {
   merchant: string;
   date: string;
   items: string[];
+  [key: string]: any; // Add index signature for Json compatibility
 }
 
 interface ReceiptScannerProps {
@@ -191,7 +192,7 @@ export const ReceiptScanner: React.FC<ReceiptScannerProps> = ({ onExpenseAdded }
           date,
           description,
           receipt_url: receiptUrl,
-          receipt_data: scannedData
+          receipt_data: scannedData as any // Type assertion to fix Json compatibility
         });
 
       if (error) {
