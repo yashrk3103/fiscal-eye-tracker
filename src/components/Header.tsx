@@ -1,6 +1,7 @@
 
-import { Menu, PlusCircle, BarChart3, Receipt } from 'lucide-react';
+import { Menu, PlusCircle, BarChart3, Receipt, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -9,6 +10,8 @@ interface HeaderProps {
 }
 
 export const Header = ({ onMenuClick, activeView, onViewChange }: HeaderProps) => {
+  const { signOut, user } = useAuth();
+
   return (
     <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -28,42 +31,59 @@ export const Header = ({ onMenuClick, activeView, onViewChange }: HeaderProps) =
                 <Receipt className="h-5 w-5 text-white" />
               </div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-                ExpenseTracker
+                Smart Expense Tracker
               </h1>
             </div>
           </div>
 
-          <nav className="hidden md:flex items-center space-x-1">
-            <Button
-              variant={activeView === 'dashboard' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => onViewChange('dashboard')}
-              className="flex items-center space-x-2"
-            >
-              <BarChart3 className="h-4 w-4" />
-              <span>Dashboard</span>
-            </Button>
-            
-            <Button
-              variant={activeView === 'expenses' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => onViewChange('expenses')}
-              className="flex items-center space-x-2"
-            >
-              <Receipt className="h-4 w-4" />
-              <span>Expenses</span>
-            </Button>
-            
-            <Button
-              variant={activeView === 'add-expense' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => onViewChange('add-expense')}
-              className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
-            >
-              <PlusCircle className="h-4 w-4" />
-              <span>Add Expense</span>
-            </Button>
-          </nav>
+          <div className="flex items-center space-x-4">
+            <nav className="hidden md:flex items-center space-x-1">
+              <Button
+                variant={activeView === 'dashboard' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => onViewChange('dashboard')}
+                className="flex items-center space-x-2"
+              >
+                <BarChart3 className="h-4 w-4" />
+                <span>Dashboard</span>
+              </Button>
+              
+              <Button
+                variant={activeView === 'expenses' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => onViewChange('expenses')}
+                className="flex items-center space-x-2"
+              >
+                <Receipt className="h-4 w-4" />
+                <span>Expenses</span>
+              </Button>
+              
+              <Button
+                variant={activeView === 'add-expense' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => onViewChange('add-expense')}
+                className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
+              >
+                <PlusCircle className="h-4 w-4" />
+                <span>Add Expense</span>
+              </Button>
+            </nav>
+
+            <div className="flex items-center space-x-2">
+              <span className="hidden sm:block text-sm text-gray-600">
+                {user?.email}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={signOut}
+                className="flex items-center space-x-1"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:block">Sign Out</span>
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </header>

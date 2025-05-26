@@ -1,31 +1,49 @@
 
-import { useState, useEffect } from 'react';
-import { Dashboard } from '@/components/Dashboard';
-import { ExpenseForm } from '@/components/ExpenseForm';
-import { ExpenseList } from '@/components/ExpenseList';
+import React, { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Auth } from '@/components/Auth';
+import { DashboardStats } from '@/components/DashboardStats';
+import { ReceiptScanner } from '@/components/ReceiptScanner';
+import { ExpensesList } from '@/components/ExpensesList';
 import { Header } from '@/components/Header';
 import { Sidebar } from '@/components/Sidebar';
-import { useExpenseStore } from '@/store/expenseStore';
 
 const Index = () => {
+  const { user, loading } = useAuth();
   const [activeView, setActiveView] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { loadExpenses } = useExpenseStore();
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  useEffect(() => {
-    loadExpenses();
-  }, [loadExpenses]);
+  const handleExpenseAdded = () => {
+    setRefreshTrigger(prev => prev + 1);
+    setActiveView('dashboard');
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Auth />;
+  }
 
   const renderActiveView = () => {
     switch (activeView) {
       case 'dashboard':
-        return <Dashboard />;
+        return <DashboardStats />;
       case 'add-expense':
-        return <ExpenseForm onSuccess={() => setActiveView('expenses')} />;
+        return <ReceiptScanner onExpenseAdded={handleExpenseAdded} />;
       case 'expenses':
-        return <ExpenseList />;
+        return <ExpensesList refreshTrigger={refreshTrigger} />;
       default:
-        return <Dashboard />;
+        return <DashboardStats />;
     }
   };
 
